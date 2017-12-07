@@ -190,15 +190,15 @@ public class TouchMe extends Activity {
     }
 
     /** Respond to an options menu selection. */
-    @Override public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_clear:
-                dotModel.clearDots();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+//    @Override public boolean onOptionsItemSelected(final MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.menu_clear:
+//                dotModel.clearDots();
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
 
     /** Install a context menu. */
     @Override public void onCreateContextMenu(
