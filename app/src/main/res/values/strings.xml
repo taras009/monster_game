@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TouchMe</string>
+    <string name="app_name">Monster</string>
     <string name="defaultText">0</string>
+    <string name="menuLevel1">Level 1</string>
+    <string name="menuLevel2">Level 2</string>
+    <string name="menuLevel3">Level 3</string>
+    <string name="menuLevel4">Level 4</string>
+    <string name="menuLevel5">Level 5</string>
+    <string name="menuHighScores">High Scores</string>
+    <string name="clock">60</string>
+    <string name="points">0</string>
+
+    //might not need these
     <string name="labelRed">Red</string>
     <string name="labelGreen">Green</string>
     <string name="menuClear">Clear</string>
+
 </resources>
