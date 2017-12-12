@@ -18,14 +18,14 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.EditText;
 
-import com.oreilly.demo.android.pa.uidemo.model.Dot;
+import com.oreilly.demo.android.pa.uidemo.model.Monster;
 import com.oreilly.demo.android.pa.uidemo.model.Dots;
 import com.oreilly.demo.android.pa.uidemo.view.DotView;
 
 
 /** Android UI demo program */
 public class TouchMe extends Activity {
-    /** Dot diameter */
+    /** Monster diameter */
     public static final int DOT_DIAMETER = 6;
     final Dots monstersModel = new Dots(6);
     /** Listen for taps. */
@@ -140,7 +140,7 @@ public class TouchMe extends Activity {
         final EditText tb1 = (EditText) findViewById(R.id.text1);
         final EditText tb2 = (EditText) findViewById(R.id.text2);
         dotModel.setDotsChangeListener((final Dots dots) -> {
-            final Dot d = dots.getLastDot();
+            final Monster d = dots.getLastDot();
             tb1.setText((null == d) ? "" : String.valueOf(d.getX()));
             tb2.setText((null == d) ? "" : String.valueOf(d.getY()));
             dotView.invalidate();

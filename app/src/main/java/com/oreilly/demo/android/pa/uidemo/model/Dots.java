@@ -14,9 +14,9 @@ public class Dots {
         void onDotsChange(Dots dots);
     }
 
-    private final LinkedList<Dot> dots = new LinkedList<>();
-    private final List<Dot> safeDots = Collections.unmodifiableList(dots);
-    public Dot[][] positions;
+    private final LinkedList<Monster> dots = new LinkedList<>();
+    private final List<Monster> safeDots = Collections.unmodifiableList(dots);
+    public Monster[][] positions;
     private int totalDotCount;
 
     private DotsChangeListener dotsChangeListener;
@@ -27,12 +27,12 @@ public class Dots {
     }
 
     /** @return the most recently added dot. */
-    public Dot getLastDot() {
+    public Monster getLastDot() {
         return (dots.size() <= 0) ? null : dots.getLast();
     }
 
     /** @return immutable list of dots. */
-    public List<Dot> getDots() { return safeDots; }
+    public List<Monster> getDots() { return safeDots; }
     public Dots(int totalDotCount){
         this.totalDotCount = totalDotCount;
     }
@@ -43,7 +43,7 @@ public class Dots {
      * @param diameter dot size.
       */
     public void addDot(final int x, final int y, final int color, final int diameter) {
-        dots.add(new Dot(x, y, color, diameter));
+        dots.add(new Monster(x, y, color, diameter));
         notifyListener();
     }
 
@@ -65,7 +65,7 @@ public class Dots {
 
     public void initializeDots(int column, int row){
 
-        positions = new Dot[column][row];
+        positions = new Monster[column][row];
         for(int i = 0 ; i < column ; i++)
             for(int j = 0 ; j < row ; j++)
                 positions[i][j] = null;

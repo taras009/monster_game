@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.util.DisplayMetrics;
 
-import com.oreilly.demo.android.pa.uidemo.model.Dot;
+import com.oreilly.demo.android.pa.uidemo.model.Monster;
 import com.oreilly.demo.android.pa.uidemo.model.Dots;
 
 
@@ -91,7 +91,7 @@ public class DotView extends View {
             canvas.drawLine(leftMargin + (i+1) * squareWidth, topMargin , leftMargin + (i+1) * squareWidth, displayHeight - bottomMargin, paint);
         }
         paint.setStyle(Style.FILL);
-        for (final Dot dot : dots.getDots()) {
+        for (final Monster dot : dots.getDots()) {
             paint.setColor(dot.getColor());
             canvas.drawCircle(
                     (dot.getX()*squareWidth + leftMargin),
