@@ -17,9 +17,7 @@ import com.oreilly.demo.android.pa.uidemo.view.Grid;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by Group 03 on 12/1/15.
- */
+
 public class TouchMe extends Activity {
 
     /** The application model */
