@@ -58,8 +58,8 @@ public class TouchMe extends Activity {
                         for (int j = 0; j < n; j++) {
                             addDot(
                                 mDots,
-                                evt.getHistoricalX(idx, j),
-                                evt.getHistoricalY(idx, j),
+                                    (int)evt.getHistoricalX(idx, j),
+                                    (int)evt.getHistoricalY(idx, j),
                                 evt.getHistoricalPressure(idx, j),
                                 evt.getHistoricalSize(idx, j));
                         }
@@ -75,8 +75,8 @@ public class TouchMe extends Activity {
                 final int idx = evt.findPointerIndex(i);
                 addDot(
                     mDots,
-                    evt.getX(idx),
-                    evt.getY(idx),
+                        (int)evt.getX(idx),
+                        (int)evt.getY(idx),
                     evt.getPressure(idx),
                     evt.getSize(idx));
             }
@@ -86,8 +86,8 @@ public class TouchMe extends Activity {
 
         private void addDot(
                 final Dots dots,
-                final float x,
-                final float y,
+                final int x,
+                final int y,
                 final float p,
                 final float s) {
             dots.addDot(x, y, Color.CYAN, (int) ((p + 0.5) * (s + 0.5) * DOT_DIAMETER));
@@ -227,8 +227,8 @@ public class TouchMe extends Activity {
     void makeDot(final Dots dots, final DotView view, final int color) {
         final int pad = (DOT_DIAMETER + 2) * 2;
         dots.addDot(
-            DOT_DIAMETER + (rand.nextFloat() * (view.getWidth() - pad)),
-            DOT_DIAMETER + (rand.nextFloat() * (view.getHeight() - pad)),
+                (int)(DOT_DIAMETER + (rand.nextFloat() * (view.getWidth() - pad))),
+                (int)(DOT_DIAMETER + (rand.nextFloat() * (view.getHeight() - pad))),
             color,
             DOT_DIAMETER);
     }

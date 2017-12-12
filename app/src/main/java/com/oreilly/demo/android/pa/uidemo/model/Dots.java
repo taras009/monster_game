@@ -3,6 +3,7 @@ package com.oreilly.demo.android.pa.uidemo.model;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 
 /** A list of dots. */
@@ -15,6 +16,8 @@ public class Dots {
 
     private final LinkedList<Dot> dots = new LinkedList<>();
     private final List<Dot> safeDots = Collections.unmodifiableList(dots);
+    public Dot[][] positions;
+    private int totalDotCount;
 
     private DotsChangeListener dotsChangeListener;
 
@@ -37,7 +40,7 @@ public class Dots {
      * @param color dot color.
      * @param diameter dot size.
       */
-    public void addDot(final float x, final float y, final int color, final int diameter) {
+    public void addDot(final int x, final int y, final int color, final int diameter) {
         dots.add(new Dot(x, y, color, diameter));
         notifyListener();
     }
@@ -53,4 +56,30 @@ public class Dots {
             dotsChangeListener.onDotsChange(this);
         }
     }
+    public void setTotalDotCount(int totalDotCount) {
+        this.totalDotCount = totalDotCount;
+    }
+
+
+    public void initializeDots(int column, int row){
+
+        positions = new Dot[column][row];
+        for(int i = 0 ; i < column ; i++)
+            for(int j = 0 ; j < row ; j++)
+                positions[i][j] = null;
+
+        for(int i = 0 ; i < totalDotCount ; i++){
+            boolean exist = true;
+            while (exist){
+                int x = new Random().nextInt(column);
+                int y = new Random().nextInt(row);
+                if (positions[x][y] == null){
+                    exist = false;
+
+                    addDot(x,y,5,6);
+                }
+            }
+        }
+    }
+
 }
