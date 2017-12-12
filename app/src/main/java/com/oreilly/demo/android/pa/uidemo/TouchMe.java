@@ -1,44 +1,183 @@
 package com.oreilly.demo.android.pa.uidemo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.KeyEvent;
+import android.os.CountDownTimer;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.EditText;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.oreilly.demo.android.pa.uidemo.model.Monster;
 import com.oreilly.demo.android.pa.uidemo.model.Monsters;
 import com.oreilly.demo.android.pa.uidemo.view.Grid;
 
+import java.util.concurrent.TimeUnit;
 
-/** Android UI demo program */
+/**
+ * Created by Group 03 on 12/1/15.
+ */
 public class TouchMe extends Activity {
-    /** Monster diameter */
-    public static final int DOT_DIAMETER = 6;
-    final Monsters monstersModel = new Monsters(6);
+
+    /** The application model */
+    final Monsters monstersModel = new Monsters(totalNumberProbArrays[0], vulnerableProbArrays[0]);
+
+    /** The application view */
+    Grid grid;
+
+    private CountDownTimer timer;
+    TextView clockView;
+    TextView pointView;
+    Button buttonStart, buttonStop;
+
+    public static DisplayMetrics displayMetrics = new DisplayMetrics();
+
+    public static final int[] totalNumberProbArrays = {15, 20, 25, 30, 35};
+    public static final int[] vulnerableProbArrays = {25, 20, 15, 10, 5};
+
+    private boolean isStopped = true;
+
+    private static final String FORMAT = "%02d";
+
+    @Override public void onCreate(Bundle state) {
+        super.onCreate(state);
+
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+        setContentView(R.layout.monster_main);
+        pointView = (TextView)findViewById(R.id.pointsView);
+
+        this.setTitle(getResources().getText(R.string.app_name) + " - " + getResources().getText(R.string.menuLevel1));
+
+        clockView = (TextView) findViewById(R.id.clockView);
+        buttonStart = (Button) findViewById(R.id.start);
+        buttonStop = (Button) findViewById(R.id.stop);
+        clockView.setText("30");
+
+        grid = (Grid) findViewById(R.id.monsterView);
+
+        monstersModel.grid = grid;
+
+        grid.setMonsters(monstersModel);
+        grid.setOnCreateContextMenuListener(this);
+        grid.setOnTouchListener(new TrackingTouchListener(monstersModel, grid));
+
+        timer = new CountDownTimer(30000, 1000){
+            public void onTick(long millisUntilFinished){
+                clockView.setText(""+String.format(FORMAT, TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)));
+                if(monstersModel.getMonsters().size()==0){
+                    onFinish();
+                }
+            }
+            public void onFinish(){
+                grid.stopMoving();
+                clockView.setText("00");
+                isStopped = true;
+                buttonStop.setEnabled(false);
+                buttonStart.setEnabled(true);
+
+            }
+        };
+
+        buttonStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isStopped) {
+                    timer.start();
+                    grid.startMoving();
+                    pointView.setText("0");
+                    isStopped = false;
+                    buttonStart.setEnabled(false);
+                    buttonStop.setEnabled(true);
+                }
+            }
+        });
+
+        buttonStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isStopped) {
+                    grid.stopMoving();
+                    pointView.setText("0");
+                    timer.cancel();
+                    clockView.setText("30");
+                    isStopped = true;
+                    buttonStop.setEnabled(false);
+                    buttonStart.setEnabled(true);
+                }
+            }
+        });
+    }
+
+    /**
+     * Install an options menu.
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.simple_menu, menu);
+        return true;
+    }
+
+    /** Respond to an options menu selection. */
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
+        this.setTitle(getResources().getText(R.string.app_name) + " - " + item.getTitle());
+        isStopped = true;
+        buttonStop.setEnabled(false);
+        buttonStart.setEnabled(true);
+        grid.stopMoving();
+        pointView.setText("0");
+        clockView.setText("30");
+        timer.cancel();
+
+        switch (item.getItemId()) {
+            case R.id.menuLevel1:
+                monstersModel.setMonsterPop(totalNumberProbArrays[0]);
+                monstersModel.setVulnerableProb(vulnerableProbArrays[0]);
+                return true;
+            case R.id.menuLevel2:
+                monstersModel.setMonsterPop(totalNumberProbArrays[1]);
+                monstersModel.setVulnerableProb(vulnerableProbArrays[1]);
+                return true;
+            case R.id.menuLevel3:
+                monstersModel.setMonsterPop(totalNumberProbArrays[2]);
+                monstersModel.setVulnerableProb(vulnerableProbArrays[2]);
+                return true;
+            case R.id.menuLevel4:
+                monstersModel.setMonsterPop(totalNumberProbArrays[3]);
+                monstersModel.setVulnerableProb(vulnerableProbArrays[3]);
+                return true;
+            case R.id.menuLevel5:
+                monstersModel.setMonsterPop(totalNumberProbArrays[4]);
+                monstersModel.setVulnerableProb(vulnerableProbArrays[4]);
+                return true;
+            // case R.id.menuHighScores:
+            //   Snackbar highScores = Snackbar.make( VIEW , "hi, scores", 1000);
+            // highScores.show();
+            //return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     /** Listen for taps. */
-    private static final class TrackingTouchListener implements View.OnTouchListener {
-        private final Monsters mDots;
-        Grid grid;
-        private List<Integer> tracks = new ArrayList<>();
+    private final class TrackingTouchListener implements View.OnTouchListener {
 
-        TrackingTouchListener(final Monsters dots) { mDots = dots; }
+        private final Monsters mMonsters;
+        private final Grid grid;
 
-        @Override public boolean onTouch(final View v, final MotionEvent evt) {
-            final int action = evt.getAction();
+        TrackingTouchListener(Monsters mMonsters, Grid grid) {
+            this.mMonsters = mMonsters;
+            this.grid = grid;
+        }
+
+        @Override public boolean onTouch(View v, MotionEvent evt) {
+            int action = evt.getAction();
+
             switch (action & MotionEvent.ACTION_MASK) {
+
                 case MotionEvent.ACTION_DOWN:
                     float x = evt.getX();
                     float y = evt.getY();
@@ -48,176 +187,20 @@ public class TouchMe extends Activity {
                     x = x / grid.getSquareHeight();
                     y = y / grid.getSquareWidth();
 
+                    int indexX = (int)x;
+                    int indexY = (int)y;
 
-
-                    break;
-
-
-                default:
-                    return false;
-            }
-
-            for (final Integer i: tracks) {
-                final int idx = evt.findPointerIndex(i);
-                addDot(
-                    mDots,
-                        (int)evt.getX(idx),
-                        (int)evt.getY(idx),
-                    evt.getPressure(idx),
-                    evt.getSize(idx));
-            }
-
-            return true;
-        }
-
-       //removedot here
-    }
-
-    private final Random rand = new Random();
-
-    /** The application model */
-    private Monsters dotModel = new Monsters(6);
-
-
-    /** The application view */
-    private Grid grid;
-
-    /** The dot generator */
-    private Timer dotGenerator;
-
-    /** Called when the activity is first created. */
-    @Override public void onCreate(final Bundle state) {
-        super.onCreate(state);
-
-        // install the view
-        setContentView(R.layout.main);
-
-        // find the dots view
-        grid = (Grid) findViewById(R.id.dots);
-        grid.setMstrs(dotModel);
-
-        grid.setOnCreateContextMenuListener(this);
-        grid.setOnTouchListener(new TrackingTouchListener(dotModel));
-
-
-        dotModel.dotView = grid;
-
-        grid.setMstrs(monstersModel);
-        grid.setOnCreateContextMenuListener(this);
-        grid.setOnTouchListener(new TrackingTouchListener(dotModel, grid));
-
-
-        grid.setOnKeyListener((final View v, final int keyCode, final KeyEvent event) -> {
-            if (KeyEvent.ACTION_DOWN != event.getAction()) {
-                return false;
-            }
-
-            int color;
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_SPACE:
-                    color = Color.MAGENTA;
-                    break;
-                case KeyEvent.KEYCODE_ENTER:
-                    color = Color.BLUE;
+                    if(indexX >= 0 && indexX < grid.getColumn() && indexY >= 0 && indexY < grid.getRow()
+                            && mMonsters.positions[indexX][indexY]!=null && mMonsters.positions[indexX][indexY].isVulnerable()){
+                        mMonsters.removeMonster(new Monster(indexX, indexY, monstersModel.getVulnerableProb()));
+                        grid.invalidate();
+                        pointView.setText(Integer.toString(mMonsters.deadMonsters));
+                    }
                     break;
                 default:
                     return false;
             }
-
-            makeDot(dotModel, grid, color);
-
             return true;
-        });
-
-        // wire up the controller
-        findViewById(R.id.button1).setOnClickListener((final View v) ->
-            makeDot(dotModel, grid, Color.RED)
-        );
-        findViewById(R.id.button2).setOnClickListener((final View v) ->
-            makeDot(dotModel, grid, Color.GREEN)
-        );
-
-        final EditText tb1 = (EditText) findViewById(R.id.text1);
-        final EditText tb2 = (EditText) findViewById(R.id.text2);
-        dotModel.setMonsterChangeListener((final Monsters dots) -> {
-            final Monster d = dots.getLastDot();
-            tb1.setText((null == d) ? "" : String.valueOf(d.getX()));
-            tb2.setText((null == d) ? "" : String.valueOf(d.getY()));
-            grid.invalidate();
-        });
-    }
-
-    @Override public void onResume() {
-        super.onResume();
-        if (dotGenerator == null) {
-            dotGenerator = new Timer();
-            // generate new dots, one every two seconds
-            dotGenerator.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    // must invoke makeDot on the UI thread to avoid
-                    // ConcurrentModificationException on list of dots
-                    runOnUiThread(() -> makeDot(dotModel, grid, Color.BLACK));
-                }
-            }, /*initial delay*/ 0, /*periodic delay*/ 2000);
         }
-    }
-
-    @Override public void onPause() {
-        super.onPause();
-        if (dotGenerator != null) {
-            dotGenerator.cancel();
-            dotGenerator = null;
-        }
-    }
-
-    /** Install an options menu. */
-    @Override public boolean onCreateOptionsMenu(final Menu menu) {
-        getMenuInflater().inflate(R.menu.simple_menu, menu);
-        return true;
-    }
-
-    /** Respond to an options menu selection. */
-//    @Override public boolean onOptionsItemSelected(final MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.menu_clear:
-//                dotModel.clearDots();
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
-
-    /** Install a context menu. */
-    @Override public void onCreateContextMenu(
-            final ContextMenu menu,
-            final View v,
-            final ContextMenuInfo menuInfo) {
-        menu.add(Menu.NONE, 1, Menu.NONE, "Clear").setAlphabeticShortcut('x');
-    }
-
-    /** Respond to a context menu selection. */
-    @Override public boolean onContextItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case 1:
-                dotModel.clearDots();
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * @param dots the dots we're drawing
-     * @param view the view in which we're drawing dots
-     * @param color the color of the dot
-     */
-    void makeDot(final Monsters dots, final Grid view, final int color) {
-        final int pad = (DOT_DIAMETER + 2) * 2;
-        dots.addDot(
-                (int)(DOT_DIAMETER + (rand.nextFloat() * (view.getWidth() - pad))),
-                (int)(DOT_DIAMETER + (rand.nextFloat() * (view.getHeight() - pad))),
-            color,
-            DOT_DIAMETER);
     }
 }

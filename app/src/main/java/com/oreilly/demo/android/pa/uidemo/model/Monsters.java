@@ -7,6 +7,9 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
 
+import com.oreilly.demo.android.pa.uidemo.view.Grid;
+
+
 
 /** A list of Monsters. */
 public class Monsters implements Observer{
@@ -19,7 +22,7 @@ public class Monsters implements Observer{
     private final LinkedList<Monster> monsters = new LinkedList<>();
     private final List<Monster> safeDots = Collections.unmodifiableList(monsters);
     public Monster[][] positions;
-    private int totalDotCount;
+
     public Grid grid;
     private int monsterPop;
     public static int currentGroup =0;
@@ -33,6 +36,15 @@ public class Monsters implements Observer{
     public void setMonsterChangeListener(final MonsterChangeListener l) {
         monsterChangeListener = l;
     }
+
+    public int getVulnerableProb() {
+        return vulnerableProb;
+    }
+
+    public void setVulnerableProb(int vulnerableProb) {
+        this.vulnerableProb = vulnerableProb;
+    }
+
 
     /** @return the most recently added dot. */
     public Monster getLastDot() {
@@ -57,6 +69,27 @@ public class Monsters implements Observer{
         positions[newMonster.getX()][newMonster.getY()] = newMonster;
 
         return newMonster;
+    }
+
+    public void stopMoving(){
+        currentGroup = (currentGroup +1)%2;
+    }
+
+    public void startMoving(){
+        for(Monster monster : monsters){
+            Object[] params=new Object[2];
+            params[0] = positions;
+            params[1] = monster;
+            monster.async = new Monster.Async();
+            monster.async.group = currentGroup;
+            monster.async.execute(params);
+        }
+    }
+
+    public  boolean removeMonster(Monster monster){
+        positions[monster.getX()][monster.getY()] = null;
+        deadMonsters++;
+        return monsters.remove(monster);
     }
 
 

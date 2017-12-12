@@ -9,14 +9,19 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.util.DisplayMetrics;
 
+import com.oreilly.demo.android.pa.uidemo.model.Monster;
 import com.oreilly.demo.android.pa.uidemo.model.Monsters;
 
+import java.util.Observable;
+import java.util.Observer;
 
-public class Grid extends View {
+
+public class Grid extends View implements Observer {
 
     private Paint paint = new Paint();
 
-    private boolean isInitialed = false;
+    static final int FINGER_TARGET_SIZE_DP = 36;
+
     private int row;
     private int column;
     private int squareWidth;
@@ -27,7 +32,7 @@ public class Grid extends View {
     private int bottomMargin;
     private int displayWidth;
     private int displayHeight;
-    private int size = 25;
+    private boolean isInitialed = false;
 
     private Monsters monsters;
 
@@ -63,11 +68,33 @@ public class Grid extends View {
     /**
      * @param monsters
      */
+
+
     public void setMonsters(final Monsters monsters) { this.monsters = monsters; }
 
     /**
      * @see android.view.View#onDraw(android.graphics.Canvas)
      */
+
+    private void drawMonsters(Canvas canvas, Paint paint){
+        for(int i = 0 ; i < monsters.getMonsters().size() ; i++)
+            monsters.getMonsters().get(i).draw(canvas, getContext(), squareWidth, leftMargin, topMargin, paint);
+    }
+
+    @Override
+    public void update(Observable o, Object arg){  //observer pattern
+        Monster m = (Monster)arg;
+        Object[] params = new Object[2];
+        params[0] = monsters.positions;
+        params[1] = m;
+        m.async.cancel(false);
+        m.async=new Monster.Async();
+        m.async.group =m.monsterGroup;
+        m.async.execute(params);
+        invalidate();
+    }
+
+
     @Override protected void onDraw(Canvas canvas) {
         if(!isInitialed){
             getScreenSpec();
@@ -134,8 +161,8 @@ public class Grid extends View {
         displayWidth = getWidth();
 
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-        squareWidth = Math.round(size * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        squareHeight = Math.round(size * (displayMetrics.ydpi / DisplayMetrics.DENSITY_DEFAULT));
+        squareWidth = Math.round(FINGER_TARGET_SIZE_DP * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        squareHeight = Math.round(FINGER_TARGET_SIZE_DP * (displayMetrics.ydpi / DisplayMetrics.DENSITY_DEFAULT));
         row = displayHeight / squareHeight;
         column = displayWidth / squareWidth;
 
