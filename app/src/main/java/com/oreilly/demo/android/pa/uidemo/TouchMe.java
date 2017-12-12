@@ -45,7 +45,7 @@ public class TouchMe extends Activity {
 
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
-        setContentView(R.layout.monster_main);
+        setContentView(R.layout.main);
         pointView = (TextView)findViewById(R.id.pointsView);
 
         this.setTitle(getResources().getText(R.string.app_name) + " - " + getResources().getText(R.string.menuLevel1));

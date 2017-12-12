@@ -96,10 +96,10 @@ public final class Monster extends Observable{
     }
 
     /** @return the horizontal coordinate. */
-    public float getX() { return x; }
+    public int getX() { return x; }
 
     /** @return the vertical coordinate. */
-    public float getY() { return y; }
+    public int getY() { return y; }
 
     public boolean isMoved() {
         return moved;

@@ -1,65 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/root"
     android:orientation="vertical"
-    android:gravity="center_horizontal"
-    android:background="@color/lt_grey"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:baselineAligned="false">
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@color/grey">
+
+
+    <TextView
+        android:layout_width="67dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/clockView"
+        android:textSize="40dp"
+        android:layout_marginRight="5dp"
+        android:numeric="integer"
+        android:text="30"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_weight="0.36"
+        android:paddingLeft="25dp"
+        android:layout_marginTop="6dp" />
+
+    <Button
+        android:id="@+id/start"
+        android:text="Start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="28dp"
+        android:layout_marginBottom="10dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:elegantTextHeight="false" />
+    />
+
+    <Button
+        android:id="@+id/stop"
+        android:text="Stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="28dp"
+        android:layout_marginBottom="10dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:enabled="false" />
+    />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/pointsView"
+        android:layout_weight="1"
+        android:text="00"
+        android:textSize="40dp"
+        android:textAlignment="center"
+        android:numeric="integer"
+        android:layout_marginLeft="10dp"
+        android:paddingLeft="20dp"
+        android:layout_marginTop="6dp" />
+  </LinearLayout>
 
   <com.oreilly.demo.android.pa.uidemo.view.Grid
-        android:id="@+id/mstrs"
-        android:focusableInTouchMode="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@color/white"
-        />
-    
-  <LinearLayout
-      android:orientation="horizontal"
-      android:background="@color/grey"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content">
-
-    <EditText
-        android:id="@+id/text1"
-        android:text="@string/defaultText"
-        android:focusable="false"
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:layout_weight="1"/>
-
-    <EditText
-        android:id="@+id/text2"
-        android:text="@string/defaultText"
-        android:focusable="false"
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:layout_weight="1"/>
-  </LinearLayout>
-
-  <LinearLayout
-      android:orientation="horizontal"
-      android:background="@color/dk_grey"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content">
-
-    <Button
-        android:id="@+id/button1"
-        android:text="@string/labelRed"
-        android:textColor="@color/red"
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:layout_weight="1"/>
-
-    <Button
-        android:id="@+id/button2"
-        android:text="@string/labelGreen"
-        android:textColor="@color/green"
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:layout_weight="1"/>
-  </LinearLayout>
+      android:layout_height="0dp"
+      android:id="@+id/monsterView"
+      android:layout_weight="1"
+      android:background="@color/white"
+      android:focusableInTouchMode="true" />
 </LinearLayout>

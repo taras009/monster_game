@@ -92,6 +92,11 @@ public class Monsters implements Observer{
         return monsters.remove(monster);
     }
 
+    public void setMonsterPop(int monsterPop) {
+
+            this.monsterPop = monsterPop;
+
+        }
 
     /** Remove all the monsters from set */
     public void clearMonsters() {
