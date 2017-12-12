@@ -76,10 +76,7 @@ public class Grid extends View implements Observer {
      * @see android.view.View#onDraw(android.graphics.Canvas)
      */
 
-    private void drawMonsters(Canvas canvas, Paint paint){
-        for(int i = 0 ; i < monsters.getMonsters().size() ; i++)
-            monsters.getMonsters().get(i).draw(canvas, getContext(), squareWidth, leftMargin, topMargin, paint);
-    }
+
 
     @Override
     public void update(Observable o, Object arg){  //observer pattern
@@ -152,7 +149,7 @@ public class Grid extends View implements Observer {
 
     private void drawMonsters(Canvas canvas, Paint paint){
         for(int i = 0 ; i < monsters.getMonsters().size() ; i++)
-            monsters.getMonsters().get(i).draw(canvas, getContext(), squareWidth, leftMargin, topMargin, paint);
+            monsters.getMonsters().get(i).drawMonster(canvas, getContext(), squareWidth, leftMargin, topMargin, paint);
     }
 
     public void getScreenSpec(){

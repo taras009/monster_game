@@ -82,8 +82,8 @@ public final class Monster extends Observable{
     public void drawMonster(Canvas canvas, Context context, int squareWidth, int leftMargin, int topMargin, Paint paint) {
         Bitmap image;
 
-        //if (isVulnerable()) {image = BitmapFactory.decodeResource(context.getResources(), R.drawable.yellow_monster);}
-        //else {image = BitmapFactory.decodeResource(context.getResources(), R.drawable.green_monster);}
+        if (isVulnerable()) {image = BitmapFactory.decodeResource(context.getResources(), R.drawable.ytroop);}
+        else {image = BitmapFactory.decodeResource(context.getResources(), R.drawable.gtroop);}
 
         Bitmap imageScaled = Bitmap.createScaledBitmap(image, squareWidth, squareWidth, false);
         canvas.drawBitmap(imageScaled, getX() * squareWidth + leftMargin, getY() * squareWidth + topMargin, paint);
