@@ -6,24 +6,26 @@ import java.util.List;
 import java.util.Random;
 
 
-/** A list of dots. */
-public class Dots {
+/** A list of Monsters. */
+public class Monsters {
     /** DotChangeListener. */
-    public interface DotsChangeListener {
-        /** @param dots the dots that changed. */
-        void onDotsChange(Dots dots);
+    public interface MonsterChangeListener {
+        /** @param monsters the monsters that changed. */
+        void onDotsChange(Monsters monsters);
     }
 
     private final LinkedList<Monster> dots = new LinkedList<>();
     private final List<Monster> safeDots = Collections.unmodifiableList(dots);
     public Monster[][] positions;
     private int totalDotCount;
+    public Grid grid;
 
-    private DotsChangeListener dotsChangeListener;
+
+    private MonsterChangeListener monsterChangeListener;
 
     /** @param l set the change listener. */
-    public void setDotsChangeListener(final DotsChangeListener l) {
-        dotsChangeListener = l;
+    public void setMonsterChangeListener(final MonsterChangeListener l) {
+        monsterChangeListener = l;
     }
 
     /** @return the most recently added dot. */
@@ -33,18 +35,23 @@ public class Dots {
 
     /** @return immutable list of dots. */
     public List<Monster> getDots() { return safeDots; }
-    public Dots(int totalDotCount){
-        this.totalDotCount = totalDotCount;
+    public Monsters(int totalMonsterNumberProb, int vulnerableProb){
+        this.totalNumberOfMonsters = totalMonsterNumberProb;
+        this.vulnerableProb = vulnerableProb;
     }
     /**
-     * @param x dot horizontal coordinate.
-     * @param y dot vertical coordinate.
-     * @param color dot color.
-     * @param diameter dot size.
-      */
-    public void addDot(final int x, final int y, final int color, final int diameter) {
-        dots.add(new Monster(x, y, color, diameter));
-        notifyListener();
+     * @param newMonster is a monster
+     */
+    public Monster addMonster(Monster newMonster) {
+        newMonster.addObserver(monsterGrid);
+        monsters.add(newMonster);
+        positions[newMonster.getX()][newMonster.getY()] = newMonster;
+
+        return newMonster;
+    }
+
+    public List<Monster> getMonsters() {
+        return monsters;
     }
 
     /** Remove all dots. */
@@ -54,8 +61,8 @@ public class Dots {
     }
 
     private void notifyListener() {
-        if (null != dotsChangeListener) {
-            dotsChangeListener.onDotsChange(this);
+        if (null != monsterChangeListener) {
+            monsterChangeListener.onDotsChange(this);
         }
     }
     public void setTotalDotCount(int totalDotCount) {

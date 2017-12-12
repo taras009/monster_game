@@ -2,6 +2,14 @@ package com.oreilly.demo.android.pa.uidemo.model;
 
 
 import java.util.Random;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+
+import com.oreilly.demo.android.pa.uidemo.R;
+
 
 /** A dot: the coordinates, color and size. */
 public final class Monster {
@@ -29,7 +37,17 @@ public final class Monster {
         this.isVuln = randomNum.nextInt(100) < vulnChance;
     }
 
-    
+    //this method is meant to draw our monster on the android canvas
+    public void drawMonster(Canvas canvas, Context context, int squareWidth, int leftMargin, int topMargin, Paint paint) {
+        Bitmap image;
+
+        if (isVulnerable()) {image = BitmapFactory.decodeResource(context.getResources(), R.drawable.ytroop);}
+        else {image = BitmapFactory.decodeResource(context.getResources(), R.drawable.gtroop);}
+
+        Bitmap imageScaled = Bitmap.createScaledBitmap(image, squareWidth, squareWidth, false);
+        canvas.drawBitmap(imageScaled, getX() * squareWidth + leftMargin, getY() * squareWidth + topMargin, paint);
+
+    }
 
     /** @return whether the monster is currently vulnerable*/
     public boolean isVulnerable() {

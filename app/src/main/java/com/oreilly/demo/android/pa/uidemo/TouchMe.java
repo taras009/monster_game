@@ -19,22 +19,22 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.EditText;
 
 import com.oreilly.demo.android.pa.uidemo.model.Monster;
-import com.oreilly.demo.android.pa.uidemo.model.Dots;
-import com.oreilly.demo.android.pa.uidemo.view.DotView;
+import com.oreilly.demo.android.pa.uidemo.model.Monsters;
+import com.oreilly.demo.android.pa.uidemo.view.Grid;
 
 
 /** Android UI demo program */
 public class TouchMe extends Activity {
     /** Monster diameter */
     public static final int DOT_DIAMETER = 6;
-    final Dots monstersModel = new Dots(6);
+    final Monsters monstersModel = new Monsters(6);
     /** Listen for taps. */
     private static final class TrackingTouchListener implements View.OnTouchListener {
-        private final Dots mDots;
-        DotView dotView;
+        private final Monsters mDots;
+        Grid grid;
         private List<Integer> tracks = new ArrayList<>();
 
-        TrackingTouchListener(final Dots dots) { mDots = dots; }
+        TrackingTouchListener(final Monsters dots) { mDots = dots; }
 
         @Override public boolean onTouch(final View v, final MotionEvent evt) {
             final int action = evt.getAction();
@@ -42,11 +42,11 @@ public class TouchMe extends Activity {
                 case MotionEvent.ACTION_DOWN:
                     float x = evt.getX();
                     float y = evt.getY();
-                    x = x - dotView.getLeftMargin();
-                    y = y - dotView.getTopMargin();
+                    x = x - grid.getLeftMargin();
+                    y = y - grid.getTopMargin();
 
-                    x = x / dotView.getSquareHeight();
-                    y = y / dotView.getSquareWidth();
+                    x = x / grid.getSquareHeight();
+                    y = y / grid.getSquareWidth();
 
 
 
@@ -76,11 +76,11 @@ public class TouchMe extends Activity {
     private final Random rand = new Random();
 
     /** The application model */
-    private  Dots dotModel = new Dots(6);
+    private Monsters dotModel = new Monsters(6);
 
 
     /** The application view */
-    private DotView dotView;
+    private Grid grid;
 
     /** The dot generator */
     private Timer dotGenerator;
@@ -93,21 +93,21 @@ public class TouchMe extends Activity {
         setContentView(R.layout.main);
 
         // find the dots view
-        dotView = (DotView) findViewById(R.id.dots);
-        dotView.setDots(dotModel);
+        grid = (Grid) findViewById(R.id.dots);
+        grid.setMstrs(dotModel);
 
-        dotView.setOnCreateContextMenuListener(this);
-        dotView.setOnTouchListener(new TrackingTouchListener(dotModel));
-
-
-        dotModel.dotView = dotView;
-
-        dotView.setDots(monstersModel);
-        dotView.setOnCreateContextMenuListener(this);
-        dotView.setOnTouchListener(new TrackingTouchListener(dotModel, dotView));
+        grid.setOnCreateContextMenuListener(this);
+        grid.setOnTouchListener(new TrackingTouchListener(dotModel));
 
 
-        dotView.setOnKeyListener((final View v, final int keyCode, final KeyEvent event) -> {
+        dotModel.dotView = grid;
+
+        grid.setMstrs(monstersModel);
+        grid.setOnCreateContextMenuListener(this);
+        grid.setOnTouchListener(new TrackingTouchListener(dotModel, grid));
+
+
+        grid.setOnKeyListener((final View v, final int keyCode, final KeyEvent event) -> {
             if (KeyEvent.ACTION_DOWN != event.getAction()) {
                 return false;
             }
@@ -124,26 +124,26 @@ public class TouchMe extends Activity {
                     return false;
             }
 
-            makeDot(dotModel, dotView, color);
+            makeDot(dotModel, grid, color);
 
             return true;
         });
 
         // wire up the controller
         findViewById(R.id.button1).setOnClickListener((final View v) ->
-            makeDot(dotModel, dotView, Color.RED)
+            makeDot(dotModel, grid, Color.RED)
         );
         findViewById(R.id.button2).setOnClickListener((final View v) ->
-            makeDot(dotModel, dotView, Color.GREEN)
+            makeDot(dotModel, grid, Color.GREEN)
         );
 
         final EditText tb1 = (EditText) findViewById(R.id.text1);
         final EditText tb2 = (EditText) findViewById(R.id.text2);
-        dotModel.setDotsChangeListener((final Dots dots) -> {
+        dotModel.setMonsterChangeListener((final Monsters dots) -> {
             final Monster d = dots.getLastDot();
             tb1.setText((null == d) ? "" : String.valueOf(d.getX()));
             tb2.setText((null == d) ? "" : String.valueOf(d.getY()));
-            dotView.invalidate();
+            grid.invalidate();
         });
     }
 
@@ -157,7 +157,7 @@ public class TouchMe extends Activity {
                 public void run() {
                     // must invoke makeDot on the UI thread to avoid
                     // ConcurrentModificationException on list of dots
-                    runOnUiThread(() -> makeDot(dotModel, dotView, Color.BLACK));
+                    runOnUiThread(() -> makeDot(dotModel, grid, Color.BLACK));
                 }
             }, /*initial delay*/ 0, /*periodic delay*/ 2000);
         }
@@ -212,7 +212,7 @@ public class TouchMe extends Activity {
      * @param view the view in which we're drawing dots
      * @param color the color of the dot
      */
-    void makeDot(final Dots dots, final DotView view, final int color) {
+    void makeDot(final Monsters dots, final Grid view, final int color) {
         final int pad = (DOT_DIAMETER + 2) * 2;
         dots.addDot(
                 (int)(DOT_DIAMETER + (rand.nextFloat() * (view.getWidth() - pad))),

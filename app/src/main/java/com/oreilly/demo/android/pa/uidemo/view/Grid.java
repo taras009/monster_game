@@ -5,23 +5,18 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.util.AttributeSet;
 import android.view.View;
 import android.util.DisplayMetrics;
 
-import com.oreilly.demo.android.pa.uidemo.model.Monster;
-import com.oreilly.demo.android.pa.uidemo.model.Dots;
+import com.oreilly.demo.android.pa.uidemo.model.Monsters;
 
 
-/**
- * I see spots!
- *
- * @author <a href="mailto:android@callmeike.net">Blake Meike</a>
- */
-public class DotView extends View {
+public class Grid extends View {
 
-    private volatile Dots dots;
+    private Paint paint = new Paint();
+
+    private boolean isInitialed = false;
     private int row;
     private int column;
     private int squareWidth;
@@ -34,12 +29,14 @@ public class DotView extends View {
     private int displayHeight;
     private int size = 25;
 
+    private Monsters monsters;
+
     private boolean loaded = false;
 
     /**
      * @param context the rest of the application
      */
-    public DotView(final Context context) {
+    public Grid(final Context context) {
         super(context);
         setFocusableInTouchMode(true);
     }
@@ -48,7 +45,7 @@ public class DotView extends View {
      * @param context
      * @param attrs
      */
-    public DotView(final Context context, final AttributeSet attrs) {
+    public Grid(final Context context, final AttributeSet attrs) {
         super(context, attrs);
         setFocusableInTouchMode(true);
     }
@@ -58,29 +55,29 @@ public class DotView extends View {
      * @param attrs
      * @param defStyle
      */
-    public DotView(final Context context, final AttributeSet attrs, final int defStyle) {
+    public Grid(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
         setFocusableInTouchMode(true);
     }
 
     /**
-     * @param dots
+     * @param monsters
      */
-    public void setDots(final Dots dots) { this.dots = dots; }
+    public void setMonsters(final Monsters monsters) { this.monsters = monsters; }
 
     /**
      * @see android.view.View#onDraw(android.graphics.Canvas)
      */
-    @Override protected void onDraw(final Canvas canvas) {
-        if(!loaded)
+    @Override protected void onDraw(Canvas canvas) {
+        if(!isInitialed){
             getScreenSpec();
+            isInitialed = true;
+        }
 
-        final Paint paint = new Paint();
-        paint.setStyle(Style.STROKE);
-        paint.setColor(hasFocus() ? Color.BLUE : Color.GRAY);
-        //canvas.drawRect(0, 0, getWidth() - 1, getHeight() -1, paint);
-
-        canvas.drawRect(leftMargin, topMargin, displayWidth - rightMargin, displayHeight - bottomMargin, paint);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.BLACK);
+        canvas.drawRect(leftMargin, topMargin, displayWidth - rightMargin, displayHeight
+                - bottomMargin, paint);
 
         for(int i = 0 ; i < row - 1 ; i ++){
             canvas.drawLine(leftMargin, topMargin + (i+1) * squareWidth, displayWidth - rightMargin,
@@ -88,17 +85,11 @@ public class DotView extends View {
         }
 
         for(int i = 0 ; i < column - 1 ; i ++){
-            canvas.drawLine(leftMargin + (i+1) * squareWidth, topMargin , leftMargin + (i+1) * squareWidth, displayHeight - bottomMargin, paint);
+            canvas.drawLine(leftMargin + (i+1) * squareWidth, topMargin , leftMargin + (i+1)
+                    * squareWidth, displayHeight - bottomMargin, paint);
         }
-        paint.setStyle(Style.FILL);
-        for (final Monster dot : dots.getDots()) {
-            paint.setColor(dot.getColor());
-            canvas.drawCircle(
-                    (dot.getX()*squareWidth + leftMargin),
-                    (dot.getY()*squareWidth + topMargin),
-                dot.getDiameter(),
-                paint);
-        }
+
+        drawMonsters(canvas, paint);
     }
 
     public int getSquareWidth(){
@@ -131,6 +122,12 @@ public class DotView extends View {
     public void setColumn(int column) {
         this.column = column;
     }
+
+    private void drawMonsters(Canvas canvas, Paint paint){
+        for(int i = 0 ; i < monsters.getMonsters().size() ; i++)
+            monsters.getMonsters().get(i).draw(canvas, getContext(), squareWidth, leftMargin, topMargin, paint);
+    }
+
     public void getScreenSpec(){
 
         displayHeight = getHeight();
@@ -149,6 +146,6 @@ public class DotView extends View {
         loaded = true;
     }
     public void startMoving(){
-        dots.initializeDots(column,row);
+        monsters.initializeDots(column,row);
     }
 }
