@@ -11,8 +11,7 @@
         android:title="@string/menuLevel4"/>
     <item android:id="@+id/menuLevel5"
         android:title="@string/menuLevel5"/>
-    <item android:id="@+id/menuHighScores"
-        android:title = "@string/menuHighScores"/>
+
 
     <!-- ICS
               android:icon="@drawable/trashcan"
