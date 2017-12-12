@@ -1,6 +1,7 @@
 package com.oreilly.demo.android.pa.uidemo.model;
 
 
+import java.util.Observable;
 import java.util.Random;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -12,7 +13,7 @@ import com.oreilly.demo.android.pa.uidemo.R;
 
 
 /** A dot: the coordinates, color and size. */
-public final class Monster {
+public final class Monster extends Observable{
     private final int x, y;
    // private final int color;
   //  private final int diameter;

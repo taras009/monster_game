@@ -3,23 +3,29 @@ package com.oreilly.demo.android.pa.uidemo.model;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Random;
 
 
 /** A list of Monsters. */
-public class Monsters {
+public class Monsters implements Observer{
     /** DotChangeListener. */
     public interface MonsterChangeListener {
         /** @param monsters the monsters that changed. */
         void onDotsChange(Monsters monsters);
     }
 
-    private final LinkedList<Monster> dots = new LinkedList<>();
-    private final List<Monster> safeDots = Collections.unmodifiableList(dots);
+    private final LinkedList<Monster> monsters = new LinkedList<>();
+    private final List<Monster> safeDots = Collections.unmodifiableList(monsters);
     public Monster[][] positions;
     private int totalDotCount;
     public Grid grid;
-
+    private int monsterPop;
+    public static int currentGroup =0;
+    public int deadMonsters = 0;
+    public static  Random ran = new Random();
+    private int vulnerableProb;
 
     private MonsterChangeListener monsterChangeListener;
 
@@ -30,33 +36,34 @@ public class Monsters {
 
     /** @return the most recently added dot. */
     public Monster getLastDot() {
-        return (dots.size() <= 0) ? null : dots.getLast();
+        return (monsters.size() <= 0) ? null : monsters.getLast();
     }
 
-    /** @return immutable list of dots. */
-    public List<Monster> getDots() { return safeDots; }
-    public Monsters(int totalMonsterNumberProb, int vulnerableProb){
-        this.totalNumberOfMonsters = totalMonsterNumberProb;
+    /** @return immutable list of monsters. */
+    public List<Monster> getMonsters() {
+        return monsters;
+    }
+
+    public Monsters(int monsterPop, int vulnerableProb){
+        this.monsterPop = monsterPop;
         this.vulnerableProb = vulnerableProb;
     }
     /**
      * @param newMonster is a monster
      */
     public Monster addMonster(Monster newMonster) {
-        newMonster.addObserver(monsterGrid);
+        newMonster.addObserver(grid);
         monsters.add(newMonster);
         positions[newMonster.getX()][newMonster.getY()] = newMonster;
 
         return newMonster;
     }
 
-    public List<Monster> getMonsters() {
-        return monsters;
-    }
 
-    /** Remove all dots. */
-    public void clearDots() {
-        dots.clear();
+    /** Remove all the monsters from set */
+    public void clearMonsters() {
+        monsters.clear();
+        deadMonsters = 0;
         notifyListener();
     }
 
@@ -65,30 +72,36 @@ public class Monsters {
             monsterChangeListener.onDotsChange(this);
         }
     }
-    public void setTotalDotCount(int totalDotCount) {
-        this.totalDotCount = totalDotCount;
-    }
+//    public void setTotalDotCount(int totalDotCount) {
+//        this.totalDotCount = totalDotCount;
+//    }
 
 
-    public void initializeDots(int column, int row){
+    @Override
+    public synchronized void update(Observable o, Object arg){ }
+
+    public void initializeMonsters(int column, int row){
 
         positions = new Monster[column][row];
         for(int i = 0 ; i < column ; i++)
             for(int j = 0 ; j < row ; j++)
                 positions[i][j] = null;
 
-        for(int i = 0 ; i < totalDotCount ; i++){
+        for(int i = 0; i < monsterPop; i++){
             boolean exist = true;
             while (exist){
-                int x = new Random().nextInt(column);
-                int y = new Random().nextInt(row);
+                int x = ran.nextInt(column);
+                int y = ran.nextInt(row);
                 if (positions[x][y] == null){
                     exist = false;
 
-                    addDot(x,y,5,6);
+                    Monster newMonster = new Monster(x,y,vulnerableProb);
+                    newMonster.monsterGroup =Monsters.currentGroup;
+                    addMonster(newMonster);
                 }
             }
         }
+        deadMonsters = 0;
     }
 
 }

@@ -145,7 +145,14 @@ public class Grid extends View {
         bottomMargin = (displayHeight % squareHeight) - (displayHeight % squareHeight) / 2;
         loaded = true;
     }
+    public void stopMoving(){
+        monsters.stopMoving();
+        monsters.clearMonsters();
+        invalidate();
+    }
+
     public void startMoving(){
-        monsters.initializeDots(column,row);
+        monsters.initializeMonsters(column, row);
+        monsters.startMoving();
     }
 }
