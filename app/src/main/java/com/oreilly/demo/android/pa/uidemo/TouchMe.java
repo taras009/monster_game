@@ -27,10 +27,11 @@ import com.oreilly.demo.android.pa.uidemo.view.DotView;
 public class TouchMe extends Activity {
     /** Dot diameter */
     public static final int DOT_DIAMETER = 6;
-
+    final Dots monstersModel = new Dots(6);
     /** Listen for taps. */
     private static final class TrackingTouchListener implements View.OnTouchListener {
         private final Dots mDots;
+        DotView dotView;
         private List<Integer> tracks = new ArrayList<>();
 
         TrackingTouchListener(final Dots dots) { mDots = dots; }
@@ -39,31 +40,16 @@ public class TouchMe extends Activity {
             final int action = evt.getAction();
             switch (action & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
-                case MotionEvent.ACTION_POINTER_DOWN:
-                    final int idx1 = (action & MotionEvent.ACTION_POINTER_INDEX_MASK)
-                        >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
-                    tracks.add(evt.getPointerId(idx1));
-                    break;
+                    float x = evt.getX();
+                    float y = evt.getY();
+                    x = x - dotView.getLeftMargin();
+                    y = y - dotView.getTopMargin();
 
-                case MotionEvent.ACTION_POINTER_UP:
-                    final int idx2 = (action & MotionEvent.ACTION_POINTER_INDEX_MASK)
-                        >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
-                    tracks.remove(evt.getPointerId(idx2));
-                    break;
+                    x = x / dotView.getSquareHeight();
+                    y = y / dotView.getSquareWidth();
 
-                case MotionEvent.ACTION_MOVE:
-                    final int n = evt.getHistorySize();
-                    for (Integer i: tracks) {
-                        final int idx = evt.findPointerIndex(i);
-                        for (int j = 0; j < n; j++) {
-                            addDot(
-                                mDots,
-                                    (int)evt.getHistoricalX(idx, j),
-                                    (int)evt.getHistoricalY(idx, j),
-                                evt.getHistoricalPressure(idx, j),
-                                evt.getHistoricalSize(idx, j));
-                        }
-                    }
+
+
                     break;
 
 
@@ -84,20 +70,14 @@ public class TouchMe extends Activity {
             return true;
         }
 
-        private void addDot(
-                final Dots dots,
-                final int x,
-                final int y,
-                final float p,
-                final float s) {
-            dots.addDot(x, y, Color.CYAN, (int) ((p + 0.5) * (s + 0.5) * DOT_DIAMETER));
-        }
+       //removedot here
     }
 
     private final Random rand = new Random();
 
     /** The application model */
-    private final Dots dotModel = new Dots();
+    private  Dots dotModel = new Dots(6);
+
 
     /** The application view */
     private DotView dotView;
@@ -118,6 +98,14 @@ public class TouchMe extends Activity {
 
         dotView.setOnCreateContextMenuListener(this);
         dotView.setOnTouchListener(new TrackingTouchListener(dotModel));
+
+
+        dotModel.dotView = dotView;
+
+        dotView.setDots(monstersModel);
+        dotView.setOnCreateContextMenuListener(this);
+        dotView.setOnTouchListener(new TrackingTouchListener(dotModel, dotView));
+
 
         dotView.setOnKeyListener((final View v, final int keyCode, final KeyEvent event) -> {
             if (KeyEvent.ACTION_DOWN != event.getAction()) {

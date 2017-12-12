@@ -42,4 +42,5 @@ public final class Dot {
         else
             return false;
     }
+
 }

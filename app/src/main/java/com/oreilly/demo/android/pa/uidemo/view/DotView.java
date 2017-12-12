@@ -94,8 +94,8 @@ public class DotView extends View {
         for (final Dot dot : dots.getDots()) {
             paint.setColor(dot.getColor());
             canvas.drawCircle(
-                dot.getX(),
-                dot.getY(),
+                    (dot.getX()*squareWidth + leftMargin),
+                    (dot.getY()*squareWidth + topMargin),
                 dot.getDiameter(),
                 paint);
         }
@@ -147,5 +147,8 @@ public class DotView extends View {
         topMargin = (displayHeight % squareHeight) / 2;
         bottomMargin = (displayHeight % squareHeight) - (displayHeight % squareHeight) / 2;
         loaded = true;
+    }
+    public void startMoving(){
+        dots.initializeDots(column,row);
     }
 }

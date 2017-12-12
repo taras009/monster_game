@@ -33,7 +33,9 @@ public class Dots {
 
     /** @return immutable list of dots. */
     public List<Dot> getDots() { return safeDots; }
-
+    public Dots(int totalDotCount){
+        this.totalDotCount = totalDotCount;
+    }
     /**
      * @param x dot horizontal coordinate.
      * @param y dot vertical coordinate.
