@@ -53,7 +53,7 @@ public class TouchMe extends Activity {
         clockView = (TextView) findViewById(R.id.clockView);
         buttonStart = (Button) findViewById(R.id.start);
         buttonStop = (Button) findViewById(R.id.stop);
-        clockView.setText("30");
+        clockView.setText("45");
 
         grid = (Grid) findViewById(R.id.monsterView);
 
@@ -63,7 +63,7 @@ public class TouchMe extends Activity {
         grid.setOnCreateContextMenuListener(this);
         grid.setOnTouchListener(new TrackingTouchListener(monstersModel, grid));
 
-        timer = new CountDownTimer(30000, 1000){
+        timer = new CountDownTimer(45000, 1000){
             public void onTick(long millisUntilFinished){
                 clockView.setText(""+String.format(FORMAT, TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)));
                 if(monstersModel.getMonsters().size()==0){
@@ -101,7 +101,7 @@ public class TouchMe extends Activity {
                     grid.stopMoving();
                     pointView.setText("0");
                     timer.cancel();
-                    clockView.setText("30");
+                    clockView.setText("45");
                     isStopped = true;
                     buttonStop.setEnabled(false);
                     buttonStart.setEnabled(true);
@@ -127,7 +127,7 @@ public class TouchMe extends Activity {
         buttonStart.setEnabled(true);
         grid.stopMoving();
         pointView.setText("0");
-        clockView.setText("30");
+        clockView.setText("45");
         timer.cancel();
 
         switch (item.getItemId()) {
