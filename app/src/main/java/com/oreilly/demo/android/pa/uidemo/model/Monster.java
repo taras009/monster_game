@@ -24,6 +24,19 @@ public final class Monster extends Observable{
     public static Random randomNum = new Random(); // random num generator for general use in class
 
 
+    /**
+     * @param x horizontal coordinate.
+     * @param y vertical coordinate.
+     * @param vulnChance for calculating how vulnerable our monster will be
+     */
+    public Monster(int x, int y, int vulnChance) {
+        this.x = x;
+        this.y = y;
+        this.vulnChance = vulnChance;
+        //random number generator is used to give
+        //us a randomness to our monster vulnerability
+        this.isVuln = randomNum.nextInt(100) < vulnChance;
+    }
 
     public Async async=new Async();
 
@@ -46,7 +59,8 @@ public final class Monster extends Observable{
             m.moved = false;
 
             try {
-                Thread.sleep(80); //move every 0.08 second
+                //0.08 second intervals
+                Thread.sleep(80);
 
             } catch (InterruptedException e) {
             }
@@ -58,29 +72,16 @@ public final class Monster extends Observable{
         protected void onPostExecute(Monster m) {
             if (m.isMoved()) {
                 m.setChanged();
-                m.notifyObservers(m);//tell MonsterGrid monster has moved
+                m.notifyObservers(m);//tell the Grid monster has moved
             }
         }
-    }
-
-    /**
-     * @param x horizontal coordinate.
-     * @param y vertical coordinate.
-     * @param vulnChance for calculating how vulnerable our monster will be
-     */
-    public Monster(int x, int y, int vulnChance) {
-        this.x = x;
-        this.y = y;
-        this.vulnChance = vulnChance;
-        //random number generator is used to give
-        //us a randomness to our monster vulnerability
-        this.isVuln = randomNum.nextInt(100) < vulnChance;
     }
 
     //this method is meant to draw our monster on the android canvas
     public void drawMonster(Canvas canvas, Context context, int squareWidth, int leftMargin, int topMargin, Paint paint) {
         Bitmap image;
 
+        //used bitmapfactory to set up our custom image on the canvas
         if (isVulnerable()) {image = BitmapFactory.decodeResource(context.getResources(), R.drawable.ytroop);}
         else {image = BitmapFactory.decodeResource(context.getResources(), R.drawable.gtroop);}
 
@@ -104,7 +105,7 @@ public final class Monster extends Observable{
         return moved;
     }
 
-
+    //comparisons
     public boolean equals(Object obj) {
         if (!(obj instanceof Monster))
             return false;
@@ -115,42 +116,36 @@ public final class Monster extends Observable{
         else
             return false;
     }
-
-    public synchronized Object[] move (Monster[][] positions){ // positions is a matrix
+    //move takes a matrix of monsters
+    public synchronized Object[] move (Monster[][] positions){
 
         Object[] result=new Object[4];
-        int lx=positions.length; //lx is the number of rows of the positions
-        int ly=positions[0].length; // ly is the number of columns of the positions
+        int lx=positions.length; //lx is the number of rows in matrix
+        int ly=positions[0].length; // ly is the number of columns in matrix
         int count=7;
 
         while(true){
-
             int newX = x + randomNum.nextInt(3) - 1;
             int newY = y + randomNum.nextInt(3) - 1;
-
             if(newX >= 0 && newX < lx && newY >= 0 && newY < ly && positions[newX][newY]==null){
                 result[0] = newX;
                 result[1] = newY;
                 moved=true;
             }
-
             count--;
             if(count==-1 || moved)
                 break;
         }
-
         if(count==-1){//stay at the same place
             result[0] = x;
             result[1] = y;
         }
-
         positions[x][y] = null;
         result[2] = randomNum.nextInt(100)<vulnChance; //some probability to change to vulnerable
         result[3] = this;
-
-        x=(int)(result[0]); //change the monster's x coordinate
-        y=(int)(result[1]); //change the monster's y coordinate
-        isVuln=(boolean)result[2]; //30 percent probability to change to vulnerable like above
+        x=(int)(result[0]); //change x coordinate
+        y=(int)(result[1]); //change y coordinate
+        isVuln=(boolean)result[2];
         positions[x][y]=this;
         return  result;
 

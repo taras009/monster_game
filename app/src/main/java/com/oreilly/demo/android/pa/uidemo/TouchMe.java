@@ -160,7 +160,7 @@ public class TouchMe extends Activity {
         }
     }
 
-    /** Listen for taps. */
+    /** Our touch . */
     private final class TrackingTouchListener implements View.OnTouchListener {
 
         private final Monsters mMonsters;

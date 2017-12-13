@@ -32,15 +32,20 @@ public class Monsters implements Observer{
 
     private MonsterChangeListener monsterChangeListener;
 
-    /** @param l set the change listener. */
-    public void setMonsterChangeListener(final MonsterChangeListener l) {
-        monsterChangeListener = l;
+    //constructor takes population and vulnerability value
+    public Monsters(int monsterPop, int vulnerableProb){
+        this.monsterPop = monsterPop;
+        this.vulnerableProb = vulnerableProb;
     }
 
+    /** @param listener set the change listener. */
+    public void setMonsterChangeListener(final MonsterChangeListener listener) {
+        monsterChangeListener = listener;
+    }
+    //getter and setter of our probability for monster vulnerability
     public int getVulnerableProb() {
         return vulnerableProb;
     }
-
     public void setVulnerableProb(int vulnerableProb) {
         this.vulnerableProb = vulnerableProb;
     }
@@ -56,10 +61,7 @@ public class Monsters implements Observer{
         return monsters;
     }
 
-    public Monsters(int monsterPop, int vulnerableProb){
-        this.monsterPop = monsterPop;
-        this.vulnerableProb = vulnerableProb;
-    }
+
     /**
      * @param newMonster is a monster
      */
@@ -86,12 +88,14 @@ public class Monsters implements Observer{
         }
     }
 
+    //remove a monster
     public  boolean removeMonster(Monster monster){
         positions[monster.getX()][monster.getY()] = null;
         deadMonsters++;
         return monsters.remove(monster);
     }
 
+    //monster population setter
     public void setMonsterPop(int monsterPop) {
 
             this.monsterPop = monsterPop;
